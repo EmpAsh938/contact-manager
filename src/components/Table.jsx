@@ -1,8 +1,11 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Avatar from "./Avatar";
 import { useEffect, useState } from "react";
+import { useGlobalContext } from "../context";
 
 export default function Table() {
+
+    const { contact, deleteContact } = useGlobalContext();
 
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({
@@ -10,43 +13,7 @@ export default function Table() {
         editModal: false,
     });
 
-    const contact = [
-        {
-            contactId: 949203,
-            name: 'ben',
-            email: 'ben123@gmail.com',
-            phonenumber: '9810292029',
-            address: 'wellington'
-        },
-        {
-            contactId: 920203,
-            name: 'william',
-            email: 'william123@gmail.com',
-            phonenumber: '9810292029',
-            address: 'wellington'
-        },
-        {
-            contactId: 939020,
-            name: 'jessica',
-            email: 'jessica123@gmail.com',
-            phonenumber: '9810292029',
-            address: 'wellington'
-        },
-        {
-            contactId: 920239,
-            name: 'claude',
-            email: 'claude123@gmail.com',
-            phonenumber: '9810292029',
-            address: 'wellington'
-        },
-        {
-            contactId: 920230,
-            name: 'norne',
-            email: 'norne123@gmail.com',
-            phonenumber: '9810292029',
-            address: 'wellington'
-        },
-    ]
+
 
     const toggleModal = (type, value) => {
         setIsModalOpen(prev => {
@@ -100,9 +67,9 @@ export default function Table() {
                 </thead>
                 <tbody>
                     {contact.map(item => {
-                        const { contactId, name, email, phonenumber, address } = item;
+                        const { id, name, email, phonenumber, address } = item;
                         return (
-                            <tr key={contactId}>
+                            <tr key={id}>
                                 <td className="table_actions">
                                     <input type="checkbox" name="" id="" />
                                     <Avatar size={30} />
@@ -123,6 +90,19 @@ export default function Table() {
                                         onClick={() => toggleModal('delete', true)}
                                         className="icons icon-delete" />
                                 </td>
+                                {/* delete modal */}
+                                {isModalOpen.deleteModal && <div onClick={handleModal} className="modal">
+                                    <div className="modal_container">
+                                        <h2>Remove the contact</h2>
+                                        <p>Do you want to remove the selected contact detail? If clicked ‘Yes, delete’ will remove the contact permanently. Click ‘No, don’t to cancel the action.</p>
+                                        <div className="modal_button_container">
+                                            <button onClick={() => deleteContact(id)}>
+                                                Yes, delete
+                                            </button>
+                                            <button onClick={() => toggleModal('delete', false)}>No, don't</button>
+                                        </div>
+                                    </div>
+                                </div>}
                             </tr>
                         )
                     })}
@@ -153,19 +133,7 @@ export default function Table() {
                 </div>
             </div>}
 
-            {/* delete modal */}
-            {isModalOpen.deleteModal && <div onClick={handleModal} className="modal">
-                <div className="modal_container">
-                    <h2>Remove the contact</h2>
-                    <p>Do you want to remove the selected contact detail? If clicked ‘Yes, delete’ will remove the contact permanently. Click ‘No, don’t to cancel the action.</p>
-                    <div className="modal_button_container">
-                        <button>
-                            Yes, delete
-                        </button>
-                        <button onClick={() => toggleModal('delete', false)}>No, don't</button>
-                    </div>
-                </div>
-            </div>}
+
         </div>
     )
 }
