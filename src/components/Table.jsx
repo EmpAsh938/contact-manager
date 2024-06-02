@@ -2,10 +2,13 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import Avatar from "./Avatar";
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../context";
+import { useLoaderData } from "react-router-dom";
 
 export default function Table() {
 
     const { contact, deleteContact, editContact, pages, rows, isLoading } = useGlobalContext();
+
+    const { id } = useLoaderData();
 
     const [isModalOpen, setIsModalOpen] = useState({
         deleteModal: false,
@@ -40,7 +43,7 @@ export default function Table() {
     }
 
     const handleDelete = (person) => {
-        deleteContact(person);
+        deleteContact(person, id);
         toggleModal('delete', false);
     }
 
@@ -84,22 +87,24 @@ export default function Table() {
                     </tr>
                 </thead>
                 <tbody>
-                    {contact.slice(pages - 1, pages + rows - 1).map(item => {
-                        const { id, name: { first }, email, phone, location: { city } } = item;
+                    {contact.slice(pages - 1, pages + rows - 1).map((item, index) => {
+                        const { name, email,
+                            phone } = item;
+                        console.log(item)
                         return (
-                            <tr key={phone}>
+                            <tr key={index}>
                                 <td className="table_actions">
                                     <input type="checkbox" name="" id="" />
                                     <Avatar size={30} />
                                     <span>
-                                        {first}
+                                        {name}
                                     </span>
 
                                 </td>
 
                                 <td>{email}</td>
                                 <td>{phone}</td>
-                                <td>{city}</td>
+                                <td>{'Wellington'}</td>
                                 <td className="table_actions">
                                     <FaEdit
                                         onClick={() => handleEdit(item)}
@@ -114,7 +119,7 @@ export default function Table() {
                                         <h2>Edit contact</h2>
                                         <div className="modal_box">
                                             <label htmlFor="name">Name</label>
-                                            <input name="name" value={editingData.name.first} onChange={handleChange} type="text" />
+                                            <input name="name" value={editingData.name} onChange={handleChange} type="text" />
                                         </div>
                                         <div className="modal_box">
                                             <label htmlFor="email">Email</label>
@@ -124,12 +129,12 @@ export default function Table() {
                                             <label htmlFor="phone">Phonenumber</label>
                                             <input type="text" name="phone" value={editingData.phone} onChange={handleChange} />
                                         </div>
-                                        <div className="modal_box">
+                                        {/* <div className="modal_box">
                                             <label htmlFor="address">Address</label>
                                             <input
-                                                value={editingData.location.city}
+                                                value={editingData.address}
                                                 type="text" onChange={handleChange} />
-                                        </div>
+                                        </div> */}
                                         <button onClick={handleEditChanges} className="modal_button">Save Changes</button>
                                     </div>
                                 </div>}

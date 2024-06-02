@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { MdAdd, MdArrowDropDown, MdFilterAlt, MdSort } from "react-icons/md";
 import { useGlobalContext } from "../context";
+import { useLoaderData } from "react-router-dom";
 
 
 export default function Actions() {
 
     const { addContact, sortByName } = useGlobalContext();
+    const { id } = useLoaderData();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [person, setPerson] = useState({
-        id: '',
         name: '',
         address: '',
         email: '',
-        phonenumber: '',
+        phone: '',
     })
 
     const handleModal = (e) => {
@@ -36,22 +37,16 @@ export default function Actions() {
     }
 
     const submitContact = () => {
-        const { name, address, phonenumber, email } = person;
-        if (name !== '' && address !== '' && phonenumber !== '' && email !== '') {
-            setPerson(prev => {
-                return {
-                    ...prev,
-                    id: new Date().getTime(),
-                }
-            })
-            addContact(person);
+        const { name, address, phone, email } = person;
+        if (name !== '' && address !== '' && phone !== '' && email !== '') {
+
+            addContact(person, id);
             setIsModalOpen(false);
             setPerson({
-                id: '',
                 name: '',
                 address: '',
                 email: '',
-                phonenumber: '',
+                phone: '',
             })
         }
     }
@@ -112,8 +107,8 @@ export default function Actions() {
                         <input onChange={handleChange} value={person.email} name="email" type="text" />
                     </div>
                     <div className="modal_box">
-                        <label htmlFor="phonenumber">Phonenumber</label>
-                        <input onChange={handleChange} value={person.phonenumber} name="phonenumber" type="text" />
+                        <label htmlFor="phone">Phone</label>
+                        <input onChange={handleChange} value={person.phone} name="phone" type="text" />
                     </div>
                     <div className="modal_box">
                         <label htmlFor="address">Address</label>

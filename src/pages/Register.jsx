@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { BASE_URL } from '../constants';
+import axios from 'axios';
 
 
 export default function Register() {
@@ -10,23 +12,32 @@ export default function Register() {
 
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (name && email && password) {
-            // register
 
-            setName('');
-            setEmail('');
-            setPassword('');
-
-            toast.success('Registration Successful')
-
-            // navigate
-            navigate('/login');
-        } else {
-            toast.error('Some fields are empty')
+        if (!name && !email && !password) {
+            return toast.error('Some fields are emtpy')
         }
+
+
+        axios.post(BASE_URL + "/api/v1/users/", { name, email, password, about: 'about' })
+            .then(response => {
+                // resets
+                setName('');
+                setEmail('');
+                setPassword('');
+
+                toast.success('Registration Successful')
+
+                // navigate
+                navigate('/login');
+                console.log(response)
+            }).catch(error => {
+                toast.error(error)
+                console.log(error)
+            })
+
     }
 
     return (

@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://randomuser.me/api/?results=100';
+export const BASE_URL = 'http://192.168.100.173:9090';
 
 /*
 

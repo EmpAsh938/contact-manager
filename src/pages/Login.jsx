@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
+import axios from 'axios';
+import { BASE_URL } from '../constants';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -12,22 +13,27 @@ export default function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (email !== '' && password !== '') {
-            // do login
-
-            let id = new Date().getTime();
-
-            // save user id and other information
-            localStorage.setItem("user", JSON.stringify({ id, email, password }))
-
-            setEmail('');
-            setPassword('');
-
-            toast.success('Login Successful')
-
-            // navigate
-            navigate('/home');
+        if (!email && !password) {
+            return toast.error('Some fields are empty')
         }
+
+        axios.post(BASE_URL + "/api/v1/users/login", { email, password })
+            .then(response => {
+                // save user id and other information
+                localStorage.setItem("user", JSON.stringify({ id: response.data.id, email, password }))
+
+                setEmail('');
+                setPassword('');
+
+                toast.success('Login Successful')
+
+                // navigate
+                navigate('/home');
+            }).catch(error => {
+                toast.error(error)
+                console.log(error)
+            })
+
     }
 
     return (

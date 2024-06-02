@@ -5,13 +5,15 @@ import Table from "../components/Table";
 import Pagination from "../components/Pagination";
 import { useGlobalContext } from "../context";
 import { useEffect } from "react";
+import { useLoaderData } from "react-router-dom";
 
 export default function Home() {
 
     const { loadContacts } = useGlobalContext();
+    const data = useLoaderData();
 
     useEffect(() => {
-        loadContacts();
+        loadContacts(data.id);
 
 
     }, [])
