@@ -5,12 +5,14 @@ import { useGlobalContext } from "../context";
 
 export default function Table() {
 
-    const { contact, deleteContact } = useGlobalContext();
+    const { contact, deleteContact, editContact, pages, rows, isLoading } = useGlobalContext();
 
-    const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({
         deleteModal: false,
         editModal: false,
+    });
+    const [editingData, setEditingData] = useState({
+
     });
 
 
@@ -32,13 +34,28 @@ export default function Table() {
         }
     }
 
-    useEffect(() => {
-        let timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1000)
+    const handleEdit = (person) => {
+        toggleModal('edit', true);
+        setEditingData({ ...person });
+    }
 
-        return () => clearTimeout(timer);
-    }, [])
+    const handleDelete = (person) => {
+        deleteContact(person);
+        toggleModal('delete', false);
+    }
+
+    const handleChange = (e) => {
+        const name = e.target.name;
+        setEditingData({
+            ...editingData,
+            [name]: e.target.value,
+        })
+    }
+
+    const handleEditChanges = () => {
+        toggleModal('edit', false);
+        editContact(editingData);
+    }
 
     if (isLoading) {
         return (
@@ -47,6 +64,7 @@ export default function Table() {
             </div>
         )
     }
+
 
     return (
         <div className="table">
@@ -66,37 +84,62 @@ export default function Table() {
                     </tr>
                 </thead>
                 <tbody>
-                    {contact.map(item => {
-                        const { id, name, email, phonenumber, address } = item;
+                    {contact.slice(pages - 1, pages + rows - 1).map(item => {
+                        const { id, name: { first }, email, phone, location: { city } } = item;
                         return (
-                            <tr key={id}>
+                            <tr key={phone}>
                                 <td className="table_actions">
                                     <input type="checkbox" name="" id="" />
                                     <Avatar size={30} />
                                     <span>
-                                        {name}
+                                        {first}
                                     </span>
 
                                 </td>
 
                                 <td>{email}</td>
-                                <td>{phonenumber}</td>
-                                <td>{address}</td>
+                                <td>{phone}</td>
+                                <td>{city}</td>
                                 <td className="table_actions">
                                     <FaEdit
-                                        onClick={() => toggleModal('edit', true)}
+                                        onClick={() => handleEdit(item)}
                                         className="icons icon-edit" />
                                     <FaTrash
                                         onClick={() => toggleModal('delete', true)}
                                         className="icons icon-delete" />
                                 </td>
+                                {/* edit contact modal  */}
+                                {isModalOpen.editModal && <div onClick={handleModal} className="modal">
+                                    <div className="modal_container">
+                                        <h2>Edit contact</h2>
+                                        <div className="modal_box">
+                                            <label htmlFor="name">Name</label>
+                                            <input name="name" value={editingData.name.first} onChange={handleChange} type="text" />
+                                        </div>
+                                        <div className="modal_box">
+                                            <label htmlFor="email">Email</label>
+                                            <input type="text" name="email" value={editingData.email} onChange={handleChange} />
+                                        </div>
+                                        <div className="modal_box">
+                                            <label htmlFor="phone">Phonenumber</label>
+                                            <input type="text" name="phone" value={editingData.phone} onChange={handleChange} />
+                                        </div>
+                                        <div className="modal_box">
+                                            <label htmlFor="address">Address</label>
+                                            <input
+                                                value={editingData.location.city}
+                                                type="text" onChange={handleChange} />
+                                        </div>
+                                        <button onClick={handleEditChanges} className="modal_button">Save Changes</button>
+                                    </div>
+                                </div>}
                                 {/* delete modal */}
                                 {isModalOpen.deleteModal && <div onClick={handleModal} className="modal">
                                     <div className="modal_container">
                                         <h2>Remove the contact</h2>
                                         <p>Do you want to remove the selected contact detail? If clicked ‘Yes, delete’ will remove the contact permanently. Click ‘No, don’t to cancel the action.</p>
                                         <div className="modal_button_container">
-                                            <button onClick={() => deleteContact(id)}>
+                                            <button onClick={() => handleDelete(item)}>
                                                 Yes, delete
                                             </button>
                                             <button onClick={() => toggleModal('delete', false)}>No, don't</button>
@@ -109,29 +152,7 @@ export default function Table() {
                 </tbody>
             </table>
 
-            {/* edit contact modal  */}
-            {isModalOpen.editModal && <div onClick={handleModal} className="modal">
-                <div className="modal_container">
-                    <h2>Edit contact</h2>
-                    <div className="modal_box">
-                        <label htmlFor="name">Name</label>
-                        <input type="text" />
-                    </div>
-                    <div className="modal_box">
-                        <label htmlFor="email">Email</label>
-                        <input type="text" />
-                    </div>
-                    <div className="modal_box">
-                        <label htmlFor="phonenumber">Phonenumber</label>
-                        <input type="text" />
-                    </div>
-                    <div className="modal_box">
-                        <label htmlFor="address">Address</label>
-                        <input type="text" />
-                    </div>
-                    <button className="modal_button">Save Changes</button>
-                </div>
-            </div>}
+
 
 
         </div>

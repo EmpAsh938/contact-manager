@@ -5,7 +5,7 @@ import { useGlobalContext } from "../context";
 
 export default function Actions() {
 
-    const { addContact } = useGlobalContext();
+    const { addContact, sortByName } = useGlobalContext();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [person, setPerson] = useState({
@@ -60,7 +60,7 @@ export default function Actions() {
     return (
         <div className="actions">
             <div className="actions_container">
-                {/* filter  */}
+                {/* sort  */}
                 <div className="actions_box">
                     <div>
                         {/* icon  */}
@@ -71,13 +71,13 @@ export default function Actions() {
                     </div>
 
                     <div className="actions_select">
-                        <span>Ascending</span>
-                        <span>Descending</span>
+                        <span onClick={() => sortByName("asc")}>Ascending</span>
+                        <span onClick={() => sortByName("desc")}>Descending</span>
                     </div>
                 </div>
 
 
-                {/* sort  */}
+                {/* filter  */}
                 <div className="actions_box">
                     <div>
                         {/* icon  */}
